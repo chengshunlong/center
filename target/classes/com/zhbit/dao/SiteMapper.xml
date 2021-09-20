@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhbit.dao.SiteMapper">
+
+    <insert id="addSite" parameterType="com.zhbit.bean.Sites">
+        insert into sites (siteName,siteStatus,tid)
+        values(#{siteName},#{siteStatus},#{tid})
+    </insert>
+
+    <delete id="deleteSite" parameterType="int">
+        delete from sites where sid = #{sid}
+    </delete>
+
+    <update id="updateSite" parameterType="com.zhbit.bean.Sites">
+        update sites
+        set siteName = #{siteName},siteStatus = #{siteStatus},
+        tid = #{tid}
+        where sid = #{sid}
+    </update>
+
+    <select id="querySiteBySid" resultType="com.zhbit.bean.Sites">
+        select * from sites where sid = #{sid}
+    </select>
+
+    <select id="queryAllSite" resultType="com.zhbit.bean.Sites">
+        select * from sites
+    </select>
+
+    <resultMap id="mySearchSite" type="com.zhbit.bean.Sites">
+        <id column="场地编号" property="sid"/>
+        <result column="场地名称" property="siteName"/>
+        <result column="场地图片" property="sitePicture"/>
+        <result column="场地状态" property="siteStatus"/>
+
+        <association property="type" javaType="com.zhbit.bean.Type">
+            <id column="类型ID" property="tid"/>
+            <result column="场地类型" property="typeName"/>
+        </association>
+    </resultMap>
+    <select id="searchSite" resultMap="mySearchSite">
+        SELECT sid '场地编号',siteName '场地名称',sitePicture '场地图片',siteStatus '场地状态',
+        `type`.typeName '场地类型',`type`.tid '类型ID'
+        FROM sites,`type`
+        <trim prefix="where" suffixOverrides="and">
+            <if test="searchParam != null and searchParam !=''">
+                sites.tid = `type`.tid
+                and
+                concat(siteName,siteStatus,typeName)
+                like concat('%',#{searchParam},'%')
+                and
+            </if>
+        </trim>
+    </select>
+
+
+    <select id="queryAllTypeName" resultType="String">
+        select typeName from type
+    </select>
+
+
+    <!--联Type 一对一-->
+    <resultMap id="MyQuerySiteWithtTypeNameBySid" type="com.zhbit.bean.Sites">
+        <id column="场地编号" property="sid"/>
+        <result column="场地名称" property="siteName"/>
+        <result column="场地图片" property="sitePicture"/>
+        <result column="场地状态" property="siteStatus"/>
+
+        <association property="type" javaType="com.zhbit.bean.Type">
+            <id column="类型id" property="tid"/>
+            <result column="场地类型" property="typeName"/>
+        </association>
+    </resultMap>
+    <select id="querySiteWithtTypeNameBySid" resultMap="MyQuerySiteWithtTypeNameBySid">
+        SELECT sid '场地编号',siteName '场地名称',sitePicture '场地图片',siteStatus '场地状态',type.typeName '场地类型',type.tid '类型id'
+        FROM sites,`type`
+        WHERE sites.tid = `type`.tid and sid = #{sid}
+    </select>
+
+<!--    联type查 -->
+    <resultMap id="MyQuerySiteWithTypeName" type="com.zhbit.bean.Sites">
+        <id column="sid" property="sid"/>
+        <result column="场地名称" property="siteName"/>
+        <result column="场地图片" property="sitePicture"/>
+        <result column="场地状态" property="siteStatus"/>
+
+        <association property="type" javaType="com.zhbit.bean.Type">
+            <id column="场地类型" property="typeName"/>
+        </association>
+    </resultMap>
+    <select id="querySiteWithTypeName" resultMap="MyQuerySiteWithTypeName">
+        SELECT sid,siteName '场地名称',sitePicture '场地图片',siteStatus '场地状态',type.typeName '场地类型'
+        FROM sites,`type`
+        WHERE sites.tid = `type`.tid
+    </select>
+
+    <select id="querySiteBySiteName" resultType="com.zhbit.bean.Sites">
+        select * from sites where siteName = #{siteName}
+    </select>
+
+    <select id="queryTidByTypeName" parameterType="String" resultType="int">
+        select tid from type where typeName = #{typeName}
+    </select>
+
+    <select id="queryTypeNameByTid" parameterType="int" resultType="com.zhbit.bean.Type">
+        select * from type where tid = #{tid}
+    </select>
+
+</mapper>

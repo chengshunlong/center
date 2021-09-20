@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace绑定接口-->
+<mapper namespace="com.zhbit.dao.UserMapper">
+
+    <insert id="addUser" parameterType="com.zhbit.bean.Users">
+        insert into users (userId,userPwd,userName,userTel,userType)
+        values(#{userId},#{userPwd},#{userName},#{userTel},#{userType})
+    </insert>
+
+    <delete id="deleteUser" parameterType="int">
+        delete from users where uid = #{uid}
+    </delete>
+
+    <update id="updateUser" parameterType="com.zhbit.bean.Users">
+        update users
+        set userId = #{userId},userPwd = #{userPwd},userName = #{userName},userTel = #{userTel},userType = #{userType}
+        where uid = #{uid}
+    </update>
+    
+    <select id="queryUserByUid" resultType="com.zhbit.bean.Users">
+        select * from users
+        where uid = #{uid}
+    </select>
+    
+    <select id="queryAllUser" resultType="com.zhbit.bean.Users">
+        select * from users
+    </select>
+
+    <select id="queryUserByUserName" resultType="com.zhbit.bean.Users">
+        select * from users where userName = #{userName}
+    </select>
+
+    <select id="queryUserByUserId" resultType="com.zhbit.bean.Users">
+        select * from users where userId = #{userId}
+    </select>
+
+    <select id="queryUserPwdByUserId" resultType="String">
+        select userPwd from users where userId = #{userId}
+    </select>
+
+    <select id="queryAllTypes" resultType="String">
+        select distinct userType from users
+    </select>
+
+    <!--模糊查询-->
+    <select id="searchUser" resultType="com.zhbit.bean.Users">
+        select * from users
+        <trim prefix="where" suffixOverrides="and">
+            <if test="searchParam != null and searchParam !=''">
+                concat(userId,userName,userTel,userType)
+                like concat('%',#{searchParam},'%')
+                and
+            </if>
+        </trim>
+    </select>
+
+
+<!--    <select id="">
+
+    </select>-->
+</mapper>

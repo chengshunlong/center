@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhbit.dao.EqpMapper">
+
+    <insert id="addEqp" parameterType="com.zhbit.bean.Eqps">
+        insert into eqps (eqpName,eqpPrice,eqpAmount)
+        values(#{eqpName},#{eqpPrice},#{eqpAmount})
+    </insert>
+
+    <delete id="deleteEqp" parameterType="int">
+        delete from eqps where eid = #{eid}
+    </delete>
+
+    <update id="updateEqp" parameterType="com.zhbit.bean.Eqps">
+        update eqps
+        set eqpName = #{eqpName},eqpPrice = #{eqpPrice},eqpAmount = #{eqpAmount}
+        where eid = #{eid}
+    </update>
+
+    <select id="queryEqpByEid" resultType="com.zhbit.bean.Eqps">
+        select * from eqps where eid = #{eid}
+    </select>
+
+    <select id="queryAllEqp" resultType="com.zhbit.bean.Eqps">
+        select * from eqps
+    </select>
+
+    <select id="queryEqpByEqpName" resultType="com.zhbit.bean.Eqps">
+        select * from eqps where eqpName = #{eqpName}
+    </select>
+
+    <select id="searchEqp" resultType="com.zhbit.bean.Eqps">
+        select * from eqps
+        <trim prefix="where" suffixOverrides="and">
+            <if test="searchParam != null and searchParam !=''">
+                concat(eqpName,eqpPrice)
+                like concat('%',#{searchParam},'%')
+                and
+            </if>
+        </trim>
+    </select>
+
+    <update id="updatePaymentEqp" parameterType="com.zhbit.bean.Eqps">
+        update eqps
+        set eqpAmount = eqpAmount - #{eqpAmount}
+        where eid = #{eid}
+    </update>
+
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhbit.dao.TotalOrdersMapper">
+
+    <insert id="addTotalOrder" parameterType="com.zhbit.bean.TotalOrders">
+        insert into totalOrders (toid,uid,userId,userName,userTel,totalPrice,status)
+        values(#{toid},#{uid},#{userId},#{userName},#{userTel},#{totalPrice},#{status})
+    </insert>
+
+    <delete id="deleteTotalOrder" parameterType="String">
+        delete from totalOrders where toid = #{toid}
+    </delete>
+
+    <update id="updateTotalOrder" parameterType="com.zhbit.bean.TotalOrders">
+        update totalOrders
+        set uid = #{uid},userId = #{userId},userName = #{userName},
+        userTel = #{userTel},totalPrice = #{totalPrice},status = #{status}
+        where toid = #{toid}
+    </update>
+
+    <select id="queryTotalOrderByTOid" resultType="com.zhbit.bean.TotalOrders">
+        select * from totalOrders where toid = #{toid}
+        ORDER BY `time` DESC
+    </select>
+
+    <select id="queryAllTotalOrders" resultType="com.zhbit.bean.TotalOrders">
+        select * from totalOrders
+        ORDER BY `time` DESC
+    </select>
+
+    <select id="queryAllTotalOrdersByUid" resultType="com.zhbit.bean.TotalOrders">
+        select * from totalOrders where uid = #{uid}
+        ORDER BY `time` DESC
+    </select>
+    
+<!--    <resultMap id="myQueryAllTotalOrdersWithEOrdersByTOid" type="com.zhbit.bean.TotalOrders">
+        <id column="订单流水号" property="toid"/>
+        <result column="用户ID" property="uid"/>
+        <result column="用户账号" property="userId"/>
+        <result column="用户姓名" property="userName"/>
+        <result column="用户电话" property="userTel"/>
+        <result column="订单总价" property="totalPrice"/>
+        <result column="订单状态" property="status"/>
+        <collection property="eOrders" ofType="com.zhbit.bean.EOrders">
+            <id column="器材订单编号" property="eoid"/>
+            <result column="器材编号" property="eid"/>
+            <result column="总表流水号" property="toid"/>
+            <result column="器材名称" property="eqpName"/>
+            <result column="器材单价" property="eqpPrice"/>
+            <result column="器材数量" property="eqpAmount"/>
+            <result column="器材订单总价" property="totalPrice"/>
+        </collection>
+    </resultMap>
+    <select id="queryAllTotalOrdersWithEOrdersByTOid" resultMap="myQueryAllTotalOrdersWithEOrdersByTOid">
+        SELECT totalOrders.toid '订单流水号',uid '用户ID',userId '用户账号',userName '用户姓名',userTel '用户电话',
+        totalOrders.totalPrice '订单总价',STATUS '订单状态',eorders.eoid '器材订单编号',eorders.eid '器材编号',
+        eorders.toid '总表流水号',eorders.eqpName '器材名称',eorders.eqpPrice '器材单价',eorders.eqpAmount '器材数量',
+        eorders.totalPrice '器材订单总价'
+        FROM totalOrders,eorders
+        WHERE totalOrders.toid = eorders.toid
+        AND totalOrders.toid = #{toid}
+    </select>
+
+
+    <resultMap id="myQueryAllTotalOrdersWithEOrders" type="com.zhbit.bean.TotalOrders">
+        <id column="订单流水号" property="toid"/>
+        <result column="用户ID" property="uid"/>
+        <result column="用户账号" property="userId"/>
+        <result column="用户姓名" property="userName"/>
+        <result column="用户电话" property="userTel"/>
+        <result column="订单总价" property="totalPrice"/>
+        <result column="订单状态" property="status"/>
+        <collection property="eOrders" ofType="com.zhbit.bean.EOrders">
+            <id column="器材订单编号" property="eoid"/>
+            <result column="器材编号" property="eid"/>
+            <result column="总表流水号" property="toid"/>
+            <result column="器材名称" property="eqpName"/>
+            <result column="器材单价" property="eqpPrice"/>
+            <result column="器材数量" property="eqpAmount"/>
+            <result column="器材订单总价" property="totalPrice"/>
+        </collection>
+    </resultMap>
+    <select id="queryAllTotalOrdersWithEOrders" resultMap="myQueryAllTotalOrdersWithEOrders">
+        SELECT totalOrders.toid '订单流水号',uid '用户ID',userId '用户账号',userName '用户姓名',userTel '用户电话',
+        totalOrders.totalPrice '订单总价',STATUS '订单状态',eorders.eoid '器材订单编号',eorders.eid '器材编号',
+        eorders.toid '总表流水号',eorders.eqpName '器材名称',eorders.eqpPrice '器材单价',eorders.eqpAmount '器材数量',
+        eorders.totalPrice '器材订单总价'
+        FROM totalOrders,eorders
+        WHERE totalOrders.toid = eorders.toid
+    </select>-->
+
+    
+    <resultMap id="myQueryAllTotalOrdersWithEOrdersPageHelper" type="com.zhbit.bean.TotalOrders">
+        <id column="订单流水号" property="toid"/>
+        <result column="用户ID" property="uid"/>
+        <result column="用户账号" property="userId"/>
+        <result column="用户姓名" property="userName"/>
+        <result column="用户电话" property="userTel"/>
+        <result column="订单总价" property="totalPrice"/>
+        <result column="订单状态" property="status"/>
+        <result column="时间" property="time"/>
+        <collection property="eOrders" select="com.zhbit.dao.EOrderMapper.queryAllEOrdersByTOid" column="订单流水号">
+        </collection>
+    </resultMap>
+    <select id="queryAllTotalOrdersWithEOrdersPageHelper" resultMap="myQueryAllTotalOrdersWithEOrdersPageHelper">
+        SELECT totalOrders.toid '订单流水号',uid '用户ID',userId '用户账号',userName '用户姓名',userTel '用户电话',
+        totalOrders.totalPrice '订单总价',STATUS '订单状态',`time` '时间'
+        FROM totalOrders
+        ORDER BY `time` DESC
+    </select>
+
+    <resultMap id="myQueryAllTotalOrdersWithEOrdersByTOidPageHelper" type="com.zhbit.bean.TotalOrders">
+        <id column="订单流水号" property="toid"/>
+        <result column="用户ID" property="uid"/>
+        <result column="用户账号" property="userId"/>
+        <result column="用户姓名" property="userName"/>
+        <result column="用户电话" property="userTel"/>
+        <result column="订单总价" property="totalPrice"/>
+        <result column="订单状态" property="status"/>
+        <result column="时间" property="time"/>
+        <collection property="eOrders" select="com.zhbit.dao.EOrderMapper.queryAllEOrdersByTOid" column="订单流水号">
+        </collection>
+    </resultMap>
+    <select id="queryAllTotalOrdersWithEOrdersByTOidPageHelper" resultMap="myQueryAllTotalOrdersWithEOrdersByTOidPageHelper">
+        SELECT totalOrders.toid '订单流水号',uid '用户ID',userId '用户账号',userName '用户姓名',userTel '用户电话',
+        totalOrders.totalPrice '订单总价',STATUS '订单状态',`time` '时间'
+        FROM totalOrders
+        WHERE toid = #{toid}
+        ORDER BY `time` DESC
+    </select>
+
+    <resultMap id="myQueryAllTotalOrdersWithEOrdersByUidPageHelper" type="com.zhbit.bean.TotalOrders">
+        <id column="订单流水号" property="toid"/>
+        <result column="用户ID" property="uid"/>
+        <result column="用户账号" property="userId"/>
+        <result column="用户姓名" property="userName"/>
+        <result column="用户电话" property="userTel"/>
+        <result column="订单总价" property="totalPrice"/>
+        <result column="订单状态" property="status"/>
+        <result column="时间" property="time"/>
+        <collection property="eOrders" select="com.zhbit.dao.EOrderMapper.queryAllEOrdersByTOid" column="订单流水号">
+        </collection>
+    </resultMap>
+    <select id="queryAllTotalOrdersWithEOrdersByUidPageHelper" resultMap="myQueryAllTotalOrdersWithEOrdersByUidPageHelper">
+        SELECT totalOrders.toid '订单流水号',uid '用户ID',userId '用户账号',userName '用户姓名',userTel '用户电话',
+        totalOrders.totalPrice '订单总价',STATUS '订单状态',`time` '时间'
+        FROM totalOrders
+        WHERE uid = #{uid}
+        ORDER BY `time` DESC
+    </select>
+
+    <resultMap id="mySearchTotalOrders" type="com.zhbit.bean.TotalOrders">
+        <id column="toid" property="toid"/>
+        <result column="uid" property="uid"/>
+        <result column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="userTel" property="userTel"/>
+        <result column="totalPrice" property="totalPrice"/>
+        <result column="status" property="status"/>
+        <result column="time" property="time"/>
+        <collection property="eOrders" select="com.zhbit.dao.EOrderMapper.queryAllEOrdersByTOid" column="toid">
+        </collection>
+    </resultMap>
+    <select id="searchTotalOrders" resultMap="mySearchTotalOrders">
+        SELECT toid,uid,userId,userName,userTel,
+        totalPrice,`status`,`time`
+        FROM totalOrders
+        <trim prefix="where" suffixOverrides="and">
+            <if test="searchParam != null and searchParam !=''">
+                concat(toid ,uid ,userId ,userName ,userTel ,totalPrice ,`status` ,`time`)
+                like concat('%',#{searchParam},'%')
+                and
+            </if>
+        </trim>
+        ORDER BY `time` DESC
+    </select>
+</mapper>
